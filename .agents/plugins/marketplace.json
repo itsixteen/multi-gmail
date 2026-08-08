@@ -1,0 +1,20 @@
+{
+  "name": "itsixteen",
+  "interface": {
+    "displayName": "我是十六 · Open Source"
+  },
+  "plugins": [
+    {
+      "name": "multi-gmail",
+      "source": {
+        "source": "local",
+        "path": "./plugins/multi-gmail"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

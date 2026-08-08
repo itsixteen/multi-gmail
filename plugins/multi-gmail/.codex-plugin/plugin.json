@@ -1,0 +1,37 @@
+{
+  "name": "multi-gmail",
+  "version": "0.1.0",
+  "description": "Secure local multi-account Gmail tools for Codex",
+  "author": {
+    "name": "我是十六",
+    "url": "https://github.com/itsixteen"
+  },
+  "license": "MIT",
+  "keywords": [
+    "gmail",
+    "email",
+    "multi-account",
+    "inbox"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Multi Gmail",
+    "shortDescription": "Work across several Gmail accounts safely.",
+    "longDescription": "Search, read, triage, label, archive, draft, and send across explicitly selected Gmail accounts. OAuth refresh tokens stay in the local macOS Keychain.",
+    "developerName": "我是十六",
+    "websiteURL": "https://github.com/itsixteen/multi-gmail",
+    "privacyPolicyURL": "https://github.com/itsixteen/multi-gmail/blob/main/PRIVACY.md",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write",
+      "Multi-account"
+    ],
+    "defaultPrompt": [
+      "\u6574\u7406\u6211\u6240\u6709 Gmail \u8d26\u53f7\u6700\u8fd1 7 \u5929\u7684\u6536\u4ef6\u7bb1\u3002",
+      "\u8de8\u6240\u6709 Gmail \u67e5\u627e\u9700\u8981\u8ddf\u8fdb\u7684 issue\u3002",
+      "\u5217\u51fa\u5df2\u8fde\u63a5\u7684 Gmail \u8d26\u53f7\u548c\u5404\u81ea\u672a\u8bfb\u90ae\u4ef6\u6570\u3002"
+    ]
+  },
+  "mcpServers": "./.mcp.json"
+}

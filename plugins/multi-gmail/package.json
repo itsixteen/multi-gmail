@@ -1,0 +1,44 @@
+{
+  "name": "multi-gmail-codex-plugin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Secure local multi-account Gmail MCP server and Codex plugin",
+  "author": "我是十六 (https://github.com/itsixteen)",
+  "license": "MIT",
+  "homepage": "https://github.com/itsixteen/multi-gmail#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itsixteen/multi-gmail.git",
+    "directory": "plugins/multi-gmail"
+  },
+  "bugs": {
+    "url": "https://github.com/itsixteen/multi-gmail/issues"
+  },
+  "keywords": [
+    "codex",
+    "gmail",
+    "mcp",
+    "multi-account"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "npm run typecheck && node scripts/build.mjs",
+    "test": "tsx --test test/*.test.ts",
+    "auth": "node dist/auth.mjs",
+    "check": "npm test && npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "esbuild": "^0.28.1",
+    "tsx": "^4.23.11",
+    "typescript": "^7.0.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

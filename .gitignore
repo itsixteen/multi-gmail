@@ -1,0 +1,19 @@
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
+node_modules/
+coverage/
+
+# Google OAuth credentials must never be committed.
+client_secret*.json
+credentials*.json
+**/client_secret*.json
+**/credentials*.json
+token*.json
+**/token*.json
+
+# Local development state.
+.codex/
+work/

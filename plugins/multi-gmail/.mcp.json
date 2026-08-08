@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "multi-gmail": {
+      "command": "/bin/sh",
+      "args": [
+        "-c",
+        "plugin_root=${PLUGIN_ROOT:-$PWD}; exec node \"$plugin_root/dist/server.mjs\""
+      ],
+      "startup_timeout_sec": 20,
+      "tool_timeout_sec": 120
+    }
+  }
+}
