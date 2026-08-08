@@ -1,110 +1,102 @@
 # Multi Gmail
 
 [![CI](https://github.com/itsixteen/multi-gmail/actions/workflows/ci.yml/badge.svg)](https://github.com/itsixteen/multi-gmail/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/itsixteen/multi-gmail/actions/workflows/codeql.yml/badge.svg)](https://github.com/itsixteen/multi-gmail/actions/workflows/codeql.yml)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-在一个 Codex 任务里，安全地处理多个 Gmail 账号。
+让 Codex 在一个任务里安全处理多个 Gmail 账号。
 
 [English](README.md)
 
-Multi Gmail 是一个本地 Codex 插件和 MCP Server。它可以跨多个明确连接的 Gmail 搜索、阅读、整理、加标签、归档、创建草稿和发送邮件；OAuth refresh token 保存在 macOS Keychain，不会把邮箱接口暴露到公网。
+支持跨账号搜索、阅读、整理、加标签、归档、创建草稿和发送邮件。所有 OAuth refresh token 都保存在你自己的 macOS Keychain，不经过项目作者的服务器。
 
-## 它解决什么问题
+## 安装
 
-大多数 Gmail 集成默认只连接一个账号。Multi Gmail 把“账号身份”作为每次操作的一部分：
+需要 macOS、Node.js 20+ 和 Codex。你不需要安装 npm 依赖，也不需要自己构建代码。
 
-- 读取工具可以查询单个账号，也可以使用 `account="all"`。
-- 写入工具必须明确指定一个邮箱地址或别名。
-- 跨账号操作会报告每个账号的失败，不会把不完整结果伪装成成功。
-- 有意不提供永久删除邮件的能力。
+> 使用 Option 2 时，通常只有 Google 登录与授权必须由你本人确认；其余命令和诊断尽量交给 Codex。OAuth JSON 只需告诉 Codex 本地路径，不要粘贴文件内容。
 
-## 安全设计
+### Option 1：常规安装
 
-| 风险 | 处理方式 |
-| --- | --- |
-| OAuth refresh token | 存储在 macOS Keychain |
-| OAuth 客户端配置 | 本地文件，权限为 `0600` |
-| MCP 传输 | 只使用本机 stdio |
-| 跨账号写入 | 拒绝；写入必须指定一个账号 |
-| 删除行为 | 只允许移动到垃圾箱，可恢复 |
-| 永久删除 | 不提供 |
-
-连接账号前请阅读[安全模型](docs/security-model.md)和[隐私说明](PRIVACY.md)。
-
-## 环境要求
-
-- macOS
-- Node.js 20 或更高版本
-- ChatGPT 桌面端中的 Codex，或 Codex CLI
-
-ChatGPT 手机端目前不支持插件；你可以通过 Codex Remote 在手机上控制一台在线的 Mac 执行任务。参见 [OpenAI 官方插件可用性说明](https://learn.chatgpt.com/docs/plugins)。
-
-## 快速开始
-
-### 1. 克隆仓库
+**1. 下载并安装插件**
 
 ```bash
 git clone https://github.com/itsixteen/multi-gmail.git
 cd multi-gmail
+codex plugin marketplace add itsixteen/multi-gmail
+codex plugin add multi-gmail@itsixteen
 ```
 
-### 2. 创建 Google OAuth Desktop client
+**2. 创建 Google OAuth client**
 
-按照 [Google OAuth 配置指南](docs/google-oauth-setup.md)操作：启用 Gmail API、配置三个所需 scope、在 Testing 模式下加入所有测试 Gmail，并创建 **Desktop app** 类型的 OAuth client。
+打开 [Google OAuth 配置指南](docs/google-oauth-setup.md)，完成以下必要操作：
 
-### 3. 连接 Gmail
+- 启用 Gmail API；
+- 在 Testing 状态下加入你要连接的 Gmail 测试用户；
+- 创建 **Desktop app** 类型的 OAuth client；
+- 下载 JSON 文件。
 
-仓库已经提交无运行时依赖的 `dist/` 构建产物，不需要先安装 npm 依赖。
+**3. 连接 Gmail**
+
+把第一条命令中的路径换成刚下载的 JSON。`personal` 和 `work` 只是别名，可以自行修改。
 
 ```bash
 node plugins/multi-gmail/dist/auth.mjs configure ~/Downloads/client_secret_....json
 node plugins/multi-gmail/dist/auth.mjs add personal
 node plugins/multi-gmail/dist/auth.mjs add work
-node plugins/multi-gmail/dist/auth.mjs list
 node plugins/multi-gmail/dist/auth.mjs doctor
 ```
 
-每次执行 `add` 都会打开 Google 授权页面。请为对应别名选择正确的 Gmail。
+每次执行 `add` 都会打开 Google 授权页面。选择对应账号并同意即可。
 
-不要把 OAuth JSON、access token、refresh token 或 Keychain 输出粘贴到聊天或 GitHub Issue。
+最后新建一个 Codex 任务，让新插件加载。
 
-### 4. 安装插件
+### Option 2：直接贴给 Codex（推荐）
 
-```bash
-codex plugin marketplace add itsixteen/multi-gmail
-codex plugin add multi-gmail@itsixteen
+在 Mac 上打开一个 Codex 任务，把下面整段贴进去：
+
+```text
+请帮我在这台 Mac 上安装并配置 Multi Gmail：
+https://github.com/itsixteen/multi-gmail
+
+目标：连接我指定的多个 Gmail，并用 doctor 验证所有账号可用。
+
+请先阅读仓库里的最新 README 和 docs/google-oauth-setup.md，然后尽量自动完成：
+1. 检查 macOS、Git、Node.js 20+ 和 Codex CLI 环境。
+2. 把仓库克隆到合适的持久目录；如果已经存在就安全更新，不要覆盖我的改动。
+3. 添加 itsixteen/multi-gmail marketplace，并安装 multi-gmail@itsixteen。
+4. 引导或协助我完成 Google Cloud 的 Gmail API、Audience/Test users 和 Desktop app OAuth client 配置。
+5. 询问 OAuth JSON 的本地路径和每个 Gmail 的别名，然后运行 auth configure 和 auth add。
+6. 运行 auth list、auth doctor 和必要的安全检查。
+7. 完成后告诉我新建一个 Codex 任务，并给我一条验证多账号连接的测试指令。
+
+你可以直接执行你有权限执行的终端命令，不要让我手动复制这些命令。只有在 Google 要求我本人登录、确认、授权，或者你需要 OAuth JSON 的本地路径和账号别名时再暂停问我。
+
+安全要求：不要在聊天或日志里显示 OAuth JSON 内容、client secret、access token、refresh token 或 Keychain 输出；不要把凭证提交到 Git；只把 OAuth JSON 的本地路径传给项目自带的 auth configure 命令。
 ```
 
-安装后新建一个 Codex 任务，让工具和 skill 重新加载。
+Codex 可以完成克隆、安装、运行命令和诊断；Google 登录及账号授权仍需要你本人确认。插件安装后要新建任务，当前任务不会自动加载刚安装的工具。
 
-## 示例
+## 可以怎么用
 
 - “整理所有 Gmail 最近 7 天未读的 issue 通知，按账号分组。”
 - “跨所有账号查找发票，不要修改邮件。”
 - “把 `personal` 里的这些邮件归档，并加上 `Receipts` 标签。”
 - “从 `work` 起草一封回复，但不要发送。”
 
-## 本地数据位置
+读取工具可以查询一个账号或 `account="all"`；所有写入都必须明确指定一个账号。项目故意不提供永久删除邮件的能力。
 
-账号信息和 OAuth Desktop client 配置保存在：
+## 安全与隐私
 
-```text
-~/Library/Application Support/Codex/Multi Gmail
-```
+- refresh token 保存在 macOS Keychain；
+- MCP 只使用本机 stdio，不开放公网邮箱接口；
+- 跨账号失败会明确报告，不会把不完整结果伪装成成功；
+- 移动到垃圾箱属于可恢复操作，永久删除不可用；
+- 每位用户创建自己的 Google OAuth client，项目作者不会收到邮箱数据或凭证。
 
-refresh token 保存在 macOS Keychain，service 名称为：
+不要把 OAuth JSON、token 或 Keychain 输出粘贴到聊天或 GitHub Issue。详见[安全模型](docs/security-model.md)、[隐私说明](PRIVACY.md)和 [OAuth 排错指南](docs/google-oauth-setup.md#troubleshooting)。
 
-```text
-com.openai.codex.multi-gmail
-```
-
-移除某个账号：
-
-```bash
-node plugins/multi-gmail/dist/auth.mjs remove personal
-```
-
-## 开发
+## 开发与贡献
 
 ```bash
 cd plugins/multi-gmail
@@ -113,13 +105,7 @@ npm test
 npm run build
 ```
 
-贡献前请阅读 [CONTRIBUTING.md](CONTRIBUTING.md)。项目架构见 [docs/architecture.md](docs/architecture.md)，计划见 [ROADMAP.md](ROADMAP.md)。
-
-## 项目状态
-
-这是早期开源版本。本地安全边界已经明确，但每位用户仍需创建自己的 Google Cloud 项目。可复现的 Bug 和功能建议请提交到 [GitHub Issues](https://github.com/itsixteen/multi-gmail/issues)；安全问题请使用 GitHub 私密漏洞报告。
-
-## 致谢与许可证
+参见 [CONTRIBUTING.md](CONTRIBUTING.md)、[项目架构](docs/architecture.md)和 [ROADMAP.md](ROADMAP.md)。Bug 和功能建议请提交到 [GitHub Issues](https://github.com/itsixteen/multi-gmail/issues)；安全问题请使用 GitHub 私密漏洞报告。
 
 多账号选择模型参考了 [`navbuildz/gmail-mcp-server`](https://github.com/navbuildz/gmail-mcp-server)，本项目是独立实现。详见 [THIRD_PARTY_NOTICES.md](plugins/multi-gmail/THIRD_PARTY_NOTICES.md)。
 
